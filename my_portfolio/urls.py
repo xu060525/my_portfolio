@@ -18,13 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.shortcuts import render
 
 from main import views
-
-# 定义一个临时的视图函数
-def test_404_view(request):
-    return render(request, '404.html')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,11 +27,7 @@ urlpatterns = [
     path('', include('main.urls')), # 首页
 
     path('blog/', include('blog.urls')),
-
-    # 测试404
-    path('test-404/', test_404_view),
 ]
-
 
 # 让开发服务器能找到图片
 if settings.DEBUG:
