@@ -1,8 +1,10 @@
-from django.shortcuts import render
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.core.mail import send_mail
+from django.contrib import messages
 
 from .models import Project
+from .forms import ContactForm
 
 # 这里的 request 参数是必须的，代表用户发来的请求
 def home(request):
@@ -26,3 +28,36 @@ def detail(request, project_id):
 
 def about(request):
     return render(request, 'main/about.html')
+
+def contact(request):
+    if request.method =='POST':
+        # 用户提交了数据，将数据绑定到表单
+        form = ContactForm(request.POST)
+
+        # 验证数据是否合法
+        if form.is_valid():
+            # 提取清洗后的数据
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+
+            # 组装邮件内容
+            full_message = f"来自: {name} <{email}>\n\n内容:\n{message}"
+            
+            # 发送邮件函数 (Subject, Message, From, To)
+            send_mail(
+                subject=f"【MyWebsite】{subject}",
+                message=full_message,
+                from_email='noreply@example.com', # 发件人（占位）
+                recipient_list=['2377392781@qq.com'], # 收件人：填你自己的邮箱
+            )
+
+            messages.success(request, '邮件已发送！我会尽快回复您。')
+            return redirect('contact')  # 提交成功后重定向，防止用户刷新重复提交
+        
+    else:
+        # GET 请求：创建一个空表单
+        form = ContactForm()
+
+    return render(request, 'main/contact.html', {'form': form})

@@ -131,3 +131,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 媒体文件（用户上传的文件）根目录
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 邮件配置
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
