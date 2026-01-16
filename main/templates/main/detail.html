@@ -37,14 +37,47 @@
 
                 <!-- 按按钮 -->
                  <div class="d-grid gap-2">
-                    <!-- 下载按钮 -->
-                     {% if project.file %}
-                     <a href="{{ project.file.url }}" class="btn btn-success btn-lg" download>
-                        下载项目附件
-                     </a>
-                     {% else %}
-                     <button class="btn btn-secondary btn-lg" disabled>暂无附件</button>
-                     {% endif %}
+                    <!-- 原来的下载按钮代码删掉，换成下面的 -->
+                    <h3 class="mt-5 mb-3">版本历史 & 下载</h3>
+
+                    {% if project.versions.all %}
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>版本号</th>
+                                        <th>发布时间</th>
+                                        <th>更新日志</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 这里的 .versions.all 就是我们在 models 里定义的 related_name -->
+                                    {% for version in project.versions.all %}
+                                    <tr>
+                                        <td><strong>{{ version.version_name }}</strong></td>
+                                        <td>{{ version.created_at|date:"Y-m-d" }}</td>
+                                        <td>
+                                            <!-- 显示前 30 个字，鼠标悬停显示全部 -->
+                                            <span title="{{ version.release_note }}">
+                                                {{ version.release_note|truncatechars:30 }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ version.file.url }}" class="btn btn-success btn-sm" download>
+                                                下载
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            暂无发布版本，敬请期待。
+                        </div>
+                    {% endif %}
 
                     <!-- GitHub 按钮 -->
                      {% if project.github_link %}

@@ -12,19 +12,37 @@ class Project(models.Model):
     # ImageField 用于图片，需要安装 pillow 库
     # upload_to 指定图片上传到哪个文件夹
     image = models.ImageField(upload_to='project_images/', verbose_name="项目封面")
-    file = models.FileField(upload_to='project_files/', blank=True, null=True, verbose_name="项目附件")
 
     # URLField 用于存链接
-    github_link = models.URLField(blank=True, verbose_name="GitHub链接")
+    github_link = models.URLField(blank=True, verbose_name="GitHub仓库")
     
     # 自动记录创建时间
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = "项目"
+        verbose_name_plural = "项目管理"  # 这是一个 Django 的历史遗留梗，复数形式
+        ordering = ['-created_at']       # 让最新的项目排在最前面
+
     def __str__(self):
         return self.title   # 这样在后台就不会显示 "Project object (1)" 而是项目名
     
+class ProjectVersion(models.Model):
+    # ForeignKey 是关键，它指向父模型 Project
+    # related_name='versions' 让我们以后可以用 project.versions.all() 查出所有版本
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='versions', verbose_name="所属项目")
+
+    version_name = models.CharField(max_length=50, verbose_name="版本号", help_text="例如: v1.0, v2.0 beta")
+    file = models.FileField(upload_to='porject_files/', verbose_name="项目附件")
+    release_note = models.TextField(verbose_name="更新日志/版本说明", blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="发布时间")
+
     class Meta:
-        verbose_name = "个人项目"
-        verbose_name_plural = "个人项目管理"
+        ordering = ['-created_at'] # 默认按时间倒序排列（最新的在最上面）
+        verbose_name = "项目版本"
+        verbose_name_plural = "版本管理"
+
+    def __str__(self):
+        return f"{self.project.title} - {self.version_name}"
 
     
