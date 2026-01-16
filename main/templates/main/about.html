@@ -1,0 +1,98 @@
+{% extends 'main/base.html' %}
+{% load static %} <!-- 必须加载静态文件标签 -->
+
+{% block title %}关于我 - 预备役自动化工程师{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- 左侧：个人信息卡片 -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm sticky-top" style="top: 20px;">
+            <!-- 头像 -->
+            <div class="card-body text-center">
+                <img src="{% static 'assets/avatar.jpg' %}" class="rounded-circle img-thumbnail mb-3" alt="我的头像" style="width: 150px; height: 150px; object-fit: cover;">
+                <h3 class="card-title">徐恺翔</h3>
+                <p class="text-muted">自动化专业 / 大二学生</p>
+                
+                <div class="d-grid gap-2 mt-4">
+                    <!-- 简历下载按钮 -->
+                    <!-- <a href="{% static 'assets/resume.pdf' %}" class="btn btn-primary" target="_blank">
+                        下载我的简历 (PDF)
+                    </a> -->
+                    <button class="btn btn-outline-dark" onclick="copyEmail()" id="emailBtn">
+                        我的邮箱: 2377392781@qq.com
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 联系方式列表 -->
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">学校: 北京科技大学</li>
+                <li class="list-group-item">GitHub: <a href="https://github.com/xu060525">suffer</a></li>
+                <li class="list-group-item">研究方向：嵌入式 / 机器视觉</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 右侧：详细介绍 -->
+    <div class="col-md-8">
+        <!-- 个人简介 -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="card-title border-bottom pb-2">个人简介</h4>
+                <p class="card-text mt-3">
+                    你好！我是一名热衷于把代码变成现实动力的自动化学生。
+                    <br><br>
+                    目前的学习重点是 Python 全栈开发与 ROS 机器人操作系统。
+                    我喜欢捣鼓树莓派、Arduino, 并坚信“Talk is cheap, show me the code”。
+                </p>
+            </div>
+        </div>
+
+        <!-- 技能树 (Progress Bars) -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="card-title border-bottom pb-2">技术栈</h4>
+                
+                <div class="mt-3">
+                    <label>Python / Django</label>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-success" style="width: 85%">85%</div>
+                    </div>
+
+                    <label>C</label>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-info" style="width: 70%">70%</div>
+                    </div>
+
+                    <label>电路设计 / Altium Designer</label>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-warning" style="width: 60%">60%</div>
+                    </div>
+
+                    <label>Linux / Git</label>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-dark" style="width: 75%">75%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 教育/经历时间轴 -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title border-bottom pb-2">教育经历</h4>
+                <ul class="list-unstyled mt-3">
+                    <li class="mb-3">
+                        <h5>北京科技大学 - 自动化</h5>
+                        <p class="text-muted mb-1">2024 - 至今 | 本科</p>
+                        <p>主修课程: 电路原理、自动控制原理、C语言程序设计。</p>
+                    </li>
+                    <!-- 可以加更多 -->
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
