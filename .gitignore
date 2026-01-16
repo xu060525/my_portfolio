@@ -1,0 +1,18 @@
+# Django 默认忽略文件
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+
+# 虚拟环境
+venv/
+env/
+
+# IDE 配置 (VS Code / PyCharm)
+.idea/
+.vscode/
+
+# 敏感信息 (以后部署会把密钥放这里，不传云端)
+.env
