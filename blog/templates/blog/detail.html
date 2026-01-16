@@ -1,8 +1,11 @@
 <!-- 继承父模板 -->
 {% extends 'main/base.html' %}
 
-<!-- 覆盖标题块 -->
-{% block title %}项目展示 - 首页{% endblock %}
+<!-- 覆盖 title block，使用文章标题 -->
+{% block title %}{{ post.title }}{% endblock %}
+
+<!-- 覆盖 description block，使用文章前100个字作为描述 -->
+{% block meta_description %}{{ post.body|striptags|truncatechars:150 }}{% endblock %}
 
 <!-- 填坑：核心内容 -->
 {% block content %}

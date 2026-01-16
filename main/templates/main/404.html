@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block title %}页面走丢了 - 404{% endblock %}
+
+{% block content %}
+<div class="container text-center my-5 py-5">
+    <h1 class="display-1 fw-bold text-muted">404</h1>
+    <h2 class="mb-4">哎呀，页面找不到了</h2>
+    <p class="lead mb-4">
+        您访问的页面可能已经被删除，或者输入了错误的网址。
+        <br>就像 PID 控制器的参数没调好，系统发散了...
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">
+        <i class="bi bi-house-door"></i> 返回首页
+    </a>
+</div>
