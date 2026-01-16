@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import send_mail
 from django.contrib import messages
+from django.conf import settings
 
 from .models import Project
 from .forms import ContactForm
@@ -38,18 +39,18 @@ def contact(request):
         if form.is_valid():
             # 提取清洗后的数据
             name = form.cleaned_data['name']
-            email = form.cleaned_data['email']
+            visitor_email = form.cleaned_data['email']
             subject = form.cleaned_data['subject']
             message = form.cleaned_data['message']
 
             # 组装邮件内容
-            full_message = f"来自: {name} <{email}>\n\n内容:\n{message}"
+            full_message = f"【来自网站的留言】\n\n发件人: {name} ({visitor_email})\n\n留言内容:\n{message}"
             
             # 发送邮件函数 (Subject, Message, From, To)
             send_mail(
                 subject=f"【MyWebsite】{subject}",
                 message=full_message,
-                from_email='noreply@example.com', # 发件人（占位）
+                from_email=settings.EMAIL_HOST_USER, # 发件人（占位）
                 recipient_list=['2377392781@qq.com'], # 收件人：填你自己的邮箱
             )
 
