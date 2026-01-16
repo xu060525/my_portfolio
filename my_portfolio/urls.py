@@ -25,6 +25,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', include('main.urls')), # 首页
+
+    path('blog/', include('blog.urls')),
 ]
 
 # 让开发服务器能找到图片
