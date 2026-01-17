@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
+from django.db.models import Q
 
 from .models import Project, Tag
 from .forms import ContactForm
@@ -64,25 +65,32 @@ def contact(request):
     return render(request, 'main/contact.html', {'form': form})
 
 def project_list(request):
-    # 获取所有标签
+    projects = Project.objects.all()
     tags = Tag.objects.all()
 
-    # 获取用户点击的标签
-    tag_slug = request.GET.get('tag')
+    selected_tag_slug = request.GET.get('tag')
+    search_query = request.GET.get('q', '')
 
-    # 基础查询
-    projects = Project.objects.all()
+    # 搜索：标题 or 描述
+    if search_query:
+        projects = projects.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
 
-    # 筛选逻辑
-    active_tag = None
-    if tag_slug:
-        # 跨表查询
-        projects = projects.filter(tags__slug=tag_slug)
-        active_tag = Tag.objects.filter(slug=tag_slug).first()
+    # Tag 筛选（假设 tag 用 slug）
+    if selected_tag_slug:
+        projects = projects.filter(
+            tags__slug=selected_tag_slug
+        )
+
+    projects = projects.distinct()
 
     context = {
-        'projects': projects, 
-        'tags': tags, 
-        'active_tag': active_tag, 
+        'projects': projects,
+        'tags': tags,
+        'selected_tag_slug': selected_tag_slug,
+        'search_query': search_query,
     }
+
     return render(request, 'main/project_list.html', context)

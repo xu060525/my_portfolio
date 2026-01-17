@@ -1,68 +1,121 @@
 {% extends 'main/base.html' %}
 
-{% block title %}项目案例库{% endblock %}
+{% block title %}项目索引 - 极简版{% endblock %}
 
 {% block content %}
-<div class="row mb-5">
-    <div class="col-12 text-center">
-        <h1>我的工程项目库</h1>
-        <p class="text-muted">Talk is cheap, show me the code.</p>
-        
-        <!-- 标签过滤器 -->
-        <div class="mt-4">
-            <a href="{% url 'project_list' %}" 
-               class="btn btn-outline-dark me-2 {% if not active_tag %}active{% endif %}">
-               全部
-            </a>
+<div class="container">
+    
+    <!-- 顶部：筛选控制台 (这是一个大表单) -->
+    <!-- method="get" 表示提交时把参数拼接到 URL 后面 -->
+    <form method="get" class="mb-5 p-4 bg-light rounded shadow-sm">
+        <div class="row g-3">
             
-            {% for tag in tags %}
-            <a href="{% url 'project_list' %}?tag={{ tag.slug }}" 
-               class="btn btn-outline-{{ tag.color }} me-2 {% if active_tag == tag %}active{% endif %}">
-               {{ tag.name }}
-            </a>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-
-<!-- 项目网格 -->
-<div class="row">
-    {% for project in projects %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm hover-effect">
-            <!-- 封面图 -->
-            {% if project.image %}
-            <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
-            {% endif %}
-            
-            <div class="card-body">
-                <h5 class="card-title">{{ project.title }}</h5>
-                
-                <!-- 显示该项目的标签 -->
-                <div class="mb-2">
-                    {% for p_tag in project.tags.all %}
-                    <span class="badge bg-{{ p_tag.color }}">{{ p_tag.name }}</span>
-                    {% endfor %}
+            <!-- 1. 搜索框 -->
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text">搜索</span>
+                    <input type="text" name="q" class="form-control" placeholder="搜索项目名称或描述..." value="{{ search_query }}">
                 </div>
-                
-                <p class="card-text text-muted">{{ project.description|truncatechars:60 }}</p>
             </div>
-            
-            <div class="card-footer bg-white border-top-0">
-                <a href="{% url 'detail' project.id %}" class="btn btn-primary w-100">查看详情 & 下载</a>
+
+            <!-- 2. 标签多选区 (核心技巧) -->
+            <div class="col-md-8">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="fw-bold text-muted me-2">筛选:</span>
+                    
+                    {% for tag in tags %}
+                    <!-- 生成一个隐藏的 checkbox，用 label 来控制它 -->
+                    <input type="checkbox" class="btn-check" id="tag_{{ tag.slug }}" 
+                           name="tag" value="{{ tag.slug }}" 
+                           autocomplete="off"
+                           {% if tag.slug in selected_tags_slugs %}checked{% endif %}>
+                    
+                    <label class="btn btn-outline-{{ tag.color|default:'secondary' }} btn-sm" for="tag_{{ tag.slug }}">
+                        {{ tag.name }}
+                    </label>
+                    {% endfor %}
+                    
+                    <!-- 提交按钮 -->
+                    <button type="submit" class="btn btn-primary btn-sm ms-auto">
+                        应用筛选
+                    </button>
+                    
+                    <!-- 重置按钮 -->
+                    <a href="{% url 'project_list' %}" class="btn btn-link btn-sm text-decoration-none">重置</a>
+                </div>
             </div>
         </div>
-    </div>
-    {% empty %}
-    <div class="col-12 text-center py-5">
-        <h3 class="text-muted">该分类下暂无项目</h3>
-    </div>
-    {% endfor %}
-</div>
+    </form>
 
-<!-- 加一点简单的 CSS 让卡片有悬浮效果 -->
-<style>
-    .hover-effect { transition: transform 0.2s; }
-    .hover-effect:hover { transform: translateY(-5px); }
-</style>
+    <!-- 主体：极简列表表格 -->
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" style="width: 40%;">项目名称</th>
+                        <th scope="col">标签</th>
+                        <th scope="col">最新版本</th>
+                        <th scope="col">发布时间</th>
+                        <th scope="col" class="text-end">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <!-- 1. 标题与简介 -->
+                        <td>
+                            <div class="fw-bold text-dark">{{ project.title }}</div>
+                            <small class="text-muted">{{ project.description|truncatechars:30 }}</small>
+                        </td>
+                        
+                        <!-- 2. 标签展示 -->
+                        <td>
+                            {% for tag in project.tags.all %}
+                            <span class="badge bg-{{ tag.color|default:'secondary' }} bg-opacity-75 text-white">
+                                {{ tag.name }}
+                            </span>
+                            {% endfor %}
+                        </td>
+
+                        <!-- 3. 版本号 (取最新的一个) -->
+                        <td>
+                            {% with project.versions.first as latest %}
+                                {% if latest %}
+                                    <span class="badge bg-light text-dark border">{{ latest.version_name }}</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+
+                        <!-- 4. 时间 -->
+                        <td class="text-muted small">
+                            {{ project.created_at|date:"Y-m-d" }}
+                        </td>
+
+                        <!-- 5. 操作按钮 -->
+                        <td class="text-end">
+                            <a href="{% url 'detail' project.id %}" class="btn btn-sm btn-outline-primary">
+                                查看
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            没有找到匹配的项目，换个关键词试试？
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="text-end mt-2 text-muted small">
+        共找到 {{ projects.count }} 个项目
+    </div>
+
+</div>
 {% endblock %}
