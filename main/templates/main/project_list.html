@@ -1,0 +1,68 @@
+{% extends 'main/base.html' %}
+
+{% block title %}项目案例库{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12 text-center">
+        <h1>我的工程项目库</h1>
+        <p class="text-muted">Talk is cheap, show me the code.</p>
+        
+        <!-- 标签过滤器 -->
+        <div class="mt-4">
+            <a href="{% url 'project_list' %}" 
+               class="btn btn-outline-dark me-2 {% if not active_tag %}active{% endif %}">
+               全部
+            </a>
+            
+            {% for tag in tags %}
+            <a href="{% url 'project_list' %}?tag={{ tag.slug }}" 
+               class="btn btn-outline-{{ tag.color }} me-2 {% if active_tag == tag %}active{% endif %}">
+               {{ tag.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- 项目网格 -->
+<div class="row">
+    {% for project in projects %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm hover-effect">
+            <!-- 封面图 -->
+            {% if project.image %}
+            <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+            {% endif %}
+            
+            <div class="card-body">
+                <h5 class="card-title">{{ project.title }}</h5>
+                
+                <!-- 显示该项目的标签 -->
+                <div class="mb-2">
+                    {% for p_tag in project.tags.all %}
+                    <span class="badge bg-{{ p_tag.color }}">{{ p_tag.name }}</span>
+                    {% endfor %}
+                </div>
+                
+                <p class="card-text text-muted">{{ project.description|truncatechars:60 }}</p>
+            </div>
+            
+            <div class="card-footer bg-white border-top-0">
+                <a href="{% url 'detail' project.id %}" class="btn btn-primary w-100">查看详情 & 下载</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <h3 class="text-muted">该分类下暂无项目</h3>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 加一点简单的 CSS 让卡片有悬浮效果 -->
+<style>
+    .hover-effect { transition: transform 0.2s; }
+    .hover-effect:hover { transform: translateY(-5px); }
+</style>
+{% endblock %}

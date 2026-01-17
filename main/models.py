@@ -2,6 +2,21 @@ from django.db import models
 
 models.DateTimeField(null=True, blank=True)
 
+class Tag(models.Model):
+    name = models.CharField(max_length=50, verbose_name="标签")
+    slug = models.SlugField(unique=True, verbose_name="标签别名 (URL用) ")
+    # 标签颜色
+    color = models.CharField(max_length=20, default='primary', verbose_name="Bootstrap颜色", help_text="可选：primary, secondary, success, danger, warning, info, dark")
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "项目标签"
+        verbose_name_plural = "标签管理"
+
+
+
 class Project(models.Model):
     # CharField 用于短文本，如标题
     title = models.CharField(max_length=100, verbose_name="项目名称")
@@ -18,6 +33,9 @@ class Project(models.Model):
     
     # 自动记录创建时间
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # 标签
+    tags = models.ManyToManyField(Tag, blank=True, verbose_name="项目标签", related_name="projects")
 
     class Meta:
         verbose_name = "项目"
@@ -45,4 +63,3 @@ class ProjectVersion(models.Model):
     def __str__(self):
         return f"{self.project.title} - {self.version_name}"
 
-    

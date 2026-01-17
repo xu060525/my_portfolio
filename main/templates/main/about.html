@@ -15,14 +15,21 @@
                 <p class="text-muted">自动化专业 / 大二学生</p>
                 
                 <div class="d-grid gap-2 mt-4">
-                    <!-- 简历下载按钮 -->
-                    <!-- <a href="{% static 'assets/resume.pdf' %}" class="btn btn-primary" target="_blank">
-                        下载我的简历 (PDF)
-                    </a> -->
-                    <button class="btn btn-outline-dark" onclick="copyEmail()" id="emailBtn">
-                        我的邮箱: 2377392781@qq.com
+                    <!-- 1. 新增：醒目的主要按钮，跳转到 Contact 页面 -->
+                    <a href="{% url 'contact' %}" class="btn btn-primary">
+                        <i class="bi bi-envelope-paper-fill"></i> 向我发送邮件！
+                    </a>
+
+                    <!-- 2. 原有：次要按钮，保留复制功能，样式改为 Outline 以示区分 -->
+                    <button class="btn btn-outline-dark" onclick="copyEmail()" id="emailBtn" 
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="点击复制">
+                        <i class="bi bi-clipboard"></i> 复制我的邮箱！
                     </button>
-                </div>
+                    
+                    <!-- 3. (可选) 简历下载保留在注释里，随时开启 -->
+                    <!-- <a href="{% static 'assets/resume.pdf' %}" class="btn btn-outline-secondary btn-sm" target="_blank">
+                        <i class="bi bi-file-earmark-pdf"></i> 下载简历
+                    </a> -->
             </div>
             
             <!-- 联系方式列表 -->
@@ -92,7 +99,6 @@
                 </ul>
             </div>
         </div>
-
     </div>
 </div>
 {% endblock %}

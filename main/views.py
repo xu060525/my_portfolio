@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
 
-from .models import Project
+from .models import Project, Tag
 from .forms import ContactForm
 
 # 这里的 request 参数是必须的，代表用户发来的请求
@@ -62,3 +62,27 @@ def contact(request):
         form = ContactForm()
 
     return render(request, 'main/contact.html', {'form': form})
+
+def project_list(request):
+    # 获取所有标签
+    tags = Tag.objects.all()
+
+    # 获取用户点击的标签
+    tag_slug = request.GET.get('tag')
+
+    # 基础查询
+    projects = Project.objects.all()
+
+    # 筛选逻辑
+    active_tag = None
+    if tag_slug:
+        # 跨表查询
+        projects = projects.filter(tags__slug=tag_slug)
+        active_tag = Tag.objects.filter(slug=tag_slug).first()
+
+    context = {
+        'projects': projects, 
+        'tags': tags, 
+        'active_tag': active_tag, 
+    }
+    return render(request, 'main/project_list.html', context)
