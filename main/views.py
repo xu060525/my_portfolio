@@ -1,3 +1,5 @@
+import logging
+
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import send_mail
@@ -7,6 +9,8 @@ from django.db.models import Q
 
 from .models import Project, Tag
 from .forms import ContactForm
+
+logger = logging.getLogger(__name__)
 
 # 这里的 request 参数是必须的，代表用户发来的请求
 def home(request):
@@ -38,22 +42,26 @@ def contact(request):
 
         # 验证数据是否合法
         if form.is_valid():
-            # 提取清洗后的数据
-            name = form.cleaned_data['name']
-            visitor_email = form.cleaned_data['email']
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
+            try:
+                # 提取清洗后的数据
+                name = form.cleaned_data['name']
+                visitor_email = form.cleaned_data['email']
+                subject = form.cleaned_data['subject']
+                message = form.cleaned_data['message']
 
-            # 组装邮件内容
-            full_message = f"【来自网站的留言】\n\n发件人: {name} ({visitor_email})\n\n留言内容:\n{message}"
-            
-            # 发送邮件函数 (Subject, Message, From, To)
-            send_mail(
-                subject=f"【MyWebsite】{subject}",
-                message=full_message,
-                from_email=settings.EMAIL_HOST_USER, # 发件人（占位）
-                recipient_list=['2377392781@qq.com'], # 收件人：填你自己的邮箱
-            )
+                # 组装邮件内容
+                full_message = f"【来自网站的留言】\n\n发件人: {name} ({visitor_email})\n\n留言内容:\n{message}"
+                
+                # 发送邮件函数 (Subject, Message, From, To)
+                send_mail(
+                    subject=f"【MyWebsite】{subject}",
+                    message=full_message,
+                    from_email=settings.EMAIL_HOST_USER, # 发件人（占位）
+                    recipient_list=['2377392781@qq.com'], # 收件人：填你自己的邮箱
+                )
+                logger.info("Contact email sent successfully")
+            except Exception as e:
+                logger.error("Failed to send contact email", exc_info=True)
 
             messages.success(request, '邮件已发送！我会尽快回复您。')
             return redirect('contact')  # 提交成功后重定向，防止用户刷新重复提交
@@ -61,6 +69,7 @@ def contact(request):
     else:
         # GET 请求：创建一个空表单
         form = ContactForm()
+        logger.warning("Invalid contact form submission")
 
     return render(request, 'main/contact.html', {'form': form})
 
@@ -68,8 +77,14 @@ def project_list(request):
     projects = Project.objects.all()
     tags = Tag.objects.all()
 
-    selected_tag_slug = request.GET.get('tag')
+    tag = request.GET.get('tag')
     search_query = request.GET.get('q', '')
+
+    logger.info("Project list visited")
+    logger.info(f"Search query='{search_query}', tag='{tag}'")
+
+    if len(search_query) > 50:
+        logger.warning("Search query too long")
 
     # 搜索：标题 or 描述
     if search_query:
@@ -79,9 +94,9 @@ def project_list(request):
         )
 
     # Tag 筛选（假设 tag 用 slug）
-    if selected_tag_slug:
+    if tag:
         projects = projects.filter(
-            tags__slug=selected_tag_slug
+            tags__slug=tag
         )
 
     projects = projects.distinct()
@@ -89,7 +104,7 @@ def project_list(request):
     context = {
         'projects': projects,
         'tags': tags,
-        'selected_tag_slug': selected_tag_slug,
+        'tag': tag,
         'search_query': search_query,
     }
 

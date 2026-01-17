@@ -1,5 +1,6 @@
 # mywebsite/settings/production.py
 from .base import *
+import os
 
 DEBUG = False
 
@@ -15,3 +16,32 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+    },
+
+    'handlers': {
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR / 'django.log',
+            'formatter': 'verbose',
+            'level': 'INFO',
+        },
+    },
+
+    'root': {
+        'handlers': ['file'],
+        'level': 'INFO',
+    },
+}

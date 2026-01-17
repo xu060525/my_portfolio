@@ -132,3 +132,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 邮件配置
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+
+LOGGING = {
+    'version': 1,
+    'disavle_existing_loggers': False, 
+}
