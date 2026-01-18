@@ -9,6 +9,7 @@ from django.db.models import Q
 
 from .models import Project, Tag
 from .forms import ContactForm
+from blog.models import Post
 
 logger = logging.getLogger(__name__)
 
@@ -109,3 +110,28 @@ def project_list(request):
     }
 
     return render(request, 'main/project_list.html', context)
+
+def search(request):
+    query = request.GET.get('q')    # 获取 URL 中的 ?q=...
+
+    project_results = []
+    post_results = []
+
+    if query:
+        # 搜项目：标题 OR 描述 包含关键词
+        project_results = Project.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
+
+        # 搜博客：标题 OR 正文 包含关键词
+        post_results = Post.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query)
+        )
+
+        context = {
+            'query': query,
+            'projects': project_results,
+            'posts': post_results, 
+        }
+
+        return render(request, 'main/search_results.html', context)

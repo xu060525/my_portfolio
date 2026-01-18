@@ -1,33 +1,125 @@
-<!-- 继承父模板 -->
 {% extends 'main/base.html' %}
+{% load static %}
 
-<!-- 覆盖标题块 -->
-{% block title %}项目展示 - 首页{% endblock %}
+{% block title %}首页 - 徐恺翔的工作室{% endblock %}
 
-<!-- 填坑：核心内容 -->
 {% block content %}
-    <div class="row">
-        <div class="col-12 text-center mb-5">
-            <h1>欢迎来到我的工作室</h1>
-            <p class="lead">这里记录着我的自动化与代码之路</p>
+<!-- 1. Hero Section: 模仿 Chrome 官网的极简首屏 -->
+<div class="px-4 py-5 my-5 text-center">
+    <!-- 如果你有 Logo 图片，可以在这里加一个 img -->
+    <!-- <img class="d-block mx-auto mb-4" src="..." alt="" width="72"> -->
+    
+    <h1 class="display-3 fw-bold text-dark mb-3">
+        构建自动化的未来
+    </h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4 text-muted">
+            你好，我是徐恺翔。这里是我的数字车间，记录着从 
+            <span class="text-primary fw-bold">Python 全栈</span> 到 
+            <span class="text-success fw-bold">嵌入式开发</span> 的每一个脚印。
+            Talk is cheap, show me the code.
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <!-- 主要按钮：圆角胶囊样式 (Rounded Pill) -->
+            <a href="#projects-section" class="btn btn-primary btn-lg px-4 gap-3 rounded-pill">
+                浏览项目 <i class="bi bi-arrow-down-short"></i>
+            </a>
+            <!-- 次要按钮：描边样式 -->
+            <a href="{% url 'about' %}" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">
+                关于我
+            </a>
         </div>
     </div>
+</div>
 
-    <!-- 项目列表 -->
+<!-- 2. 特性展示区: 三列布局，展示你的核心能力 -->
+<div class="container mb-5">
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col d-flex align-items-start">
+            <div class="icon-square bg-light text-dark flex-shrink-0 me-3 p-3 rounded-3">
+                <i class="bi bi-cpu fs-3"></i> <!-- 图标：嵌入式 -->
+            </div>
+            <div>
+                <h4>嵌入式开发</h4>
+                <p class="text-muted">熟悉 Arduino 与树莓派，探索软硬件结合的无限可能。</p>
+            </div>
+        </div>
+        <div class="col d-flex align-items-start">
+            <div class="icon-square bg-light text-dark flex-shrink-0 me-3 p-3 rounded-3">
+                <i class="bi bi-code-slash fs-3"></i> <!-- 图标：代码 -->
+            </div>
+            <div>
+                <h4>全栈 Web</h4>
+                <p class="text-muted">基于 Django 与 Bootstrap 5，构建响应式、高可用的 Web 应用。</p>
+            </div>
+        </div>
+        <div class="col d-flex align-items-start">
+            <div class="icon-square bg-light text-dark flex-shrink-0 me-3 p-3 rounded-3">
+                <i class="bi bi-robot fs-3"></i> <!-- 图标：机器人 -->
+            </div>
+            <div>
+                <h4>自动化控制</h4>
+                <p class="text-muted">自动化专业背景，深入研究 ROS 系统与机器视觉算法。</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. 项目列表: 加上 id="projects-section" 用于锚点跳转 -->
+<div class="container" id="projects-section">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+        <h2 class="fw-bold text-dark">精选项目</h2>
+        <a href="{% url 'project_list' %}" class="text-decoration-none">全部项目 &rarr;</a>
+    </div>
+
     <div class="row">
         {% for project in projects %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
+        <div class="col-md-4 mb-5">
+            <!-- 卡片优化：去边框(border-0)，加阴影(shadow-sm)，圆角加大(rounded-4) -->
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-card">
                 {% if project.image %}
-                <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+                <div class="img-wrapper">
+                    <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.title }}" style="height: 220px; object-fit: cover;">
+                </div>
+                {% else %}
+                <div class="bg-light text-secondary d-flex align-items-center justify-content-center" style="height: 220px;">
+                    <i class="bi bi-image fs-1"></i>
+                </div>
                 {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ project.title }}</h5>
-                    <p class="card-text">{{ project.description|truncatechars:50 }}</p>
-                    <a href="{% url 'detail' project.id %}" class="btn btn-outline-primary">查看详情</a>
+                
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold">{{ project.title }}</h5>
+                    <p class="card-text text-muted small mt-2">
+                        {{ project.description|truncatechars:60 }}
+                    </p>
+                    <div class="mt-4 d-flex justify-content-between align-items-center">
+                        <a href="{% url 'detail' project.id %}" class="btn btn-primary btn-sm rounded-pill px-3">
+                            查看详情
+                        </a>
+                        <small class="text-muted">{{ project.created_at|date:"M Y" }}</small>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+</div>
+
+<!-- 4. 自定义 CSS: 实现 Chrome 风格的“微交互” -->
+<style>
+    /* 让卡片悬浮时轻轻上浮 */
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px); /* 上浮 5px */
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important; /* 阴影加深 */
+    }
+    
+    /* 简单的背景装饰 (可选) */
+    body {
+        /* 给整个页面加一点点极淡的灰，凸显白色卡片 */
+        background-color: #f8f9fa; 
+    }
+</style>
 {% endblock %}

@@ -5,61 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- favicon -->
-     {% load static %}
+    {% load static %}
     <link rel="shortcut icon" type="image/png" href="{% static 'assets/favicon.ico' %}"/>
 
-    <!-- 1. 动态标题块：默认显示"我的个人主页"，子页面可以覆盖它 -->
-    <title>{% block title %}My Portfolio{% endblock %} | 我的个人主页</title>
+    <!-- 1. 动态标题 -->
+    <title>{% block title %}My Portfolio{% endblock %} | 徐恺翔的工作室</title>
     <meta name="description" content="{% block meta_description %}自动化专业学生的个人主页, 分享Python、Django开发与项目经验。{% endblock %}">
 
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- 2. 额外的 CSS 块：比如博客详情页需要的高亮样式 -->
+    <!-- 🌟 新增：Bootstrap Icons 图标库 (必须加这个，图标才能显示) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- 自定义全局样式 -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8f9fa; /* 极淡的灰背景，护眼且凸显卡片 */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* 导航栏样式微调 */
+        .navbar {
+            backdrop-filter: blur(10px); /* 磨砂玻璃效果 */
+            background-color: rgba(255, 255, 255, 0.95) !important;
+        }
+        .nav-link {
+            font-weight: 500;
+            color: #495057 !important;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #0d6efd !important; /* 悬停变蓝 */
+        }
+        
+        /* 搜索框美化 */
+        .search-input {
+            background-color: #f1f3f4; /* 谷歌灰 */
+            border: none;
+            transition: background-color 0.2s;
+        }
+        .search-input:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+        }
+
+        /* 页脚置底 */
+        footer {
+            margin-top: auto;
+        }
+    </style>
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-    <!-- === 通用导航栏 === -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <!-- === 通用导航栏 (白色、吸顶、阴影) === -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top py-3">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">自动化工程师</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <!-- Brand: 加个图标显得更专业 -->
+            <a class="navbar-brand fw-bold text-primary" href="{% url 'home' %}">
+                <i class="bi bi-robot"></i> K.X. Studio
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item px-2">
                         <a class="nav-link" href="{% url 'home' %}">首页</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item px-2">
                         <a class="nav-link" href="{% url 'project_list' %}">项目库</a>
                     </li>
-                    <li class="nav-item">
-                        <!-- 注意：这里用了 blog:list 命名空间 -->
+                    <li class="nav-item px-2">
+                        <!-- 注意：确保你的 urls.py 里有 blog:list -->
                         <a class="nav-link" href="{% url 'blog:list' %}">技术博客</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/" target="_blank">后台管理</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'about' %}" class="nav-link">关于我</a>
+                    <li class="nav-item px-2">
+                        <a class="nav-link" href="{% url 'about' %}">关于我</a>
                     </li>
                 </ul>
+
+                <!-- 搜索框：放在右侧，胶囊样式 -->
+                <form class="d-flex" action="{% url 'search' %}" method="GET">
+                    <div class="input-group">
+                        <input class="form-control rounded-pill search-input px-3" type="search" name="q" placeholder="搜索..." aria-label="Search">
+                        <!-- 搜索按钮定位在输入框里或者紧随其后，这里为了简洁，可以回车提交，或加个透明按钮 -->
+                        <button class="btn btn-link text-secondary position-absolute end-0 top-0 text-decoration-none" type="submit" style="z-index: 5;">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- 后台管理入口 (只在开发时显示，或者作为小图标放在最右) -->
+                <a class="nav-link ms-3 text-muted" href="/admin/" target="_blank" title="Admin Panel">
+                    <i class="bi bi-gear-fill"></i>
+                </a>
             </div>
         </div>
     </nav>
 
-    <!-- === 3. 核心内容块：子页面把内容填在这个坑里 === -->
-    <div class="container" style="min-height: 80vh;">
+    <!-- === 3. 核心内容块 === -->
+    <!-- 这里的 container 不再需要 min-height，因为 body 用了 flex 布局 -->
+    <main>
         {% block content %}
         {% endblock %}
-    </div>
+    </main>
 
     <!-- === 通用页脚 === -->
-    <footer class="bg-light text-center text-lg-start mt-5 py-3">
-        <div class="container text-center text-muted">
-            © 2025 Copyright: 由 Django 驱动
+    <footer class="bg-white border-top py-4 mt-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <span class="text-muted">© 2025 徐恺翔. All rights reserved.</span>
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+                    <a href="https://github.com/xu060525" target="_blank" class="text-muted text-decoration-none me-3">
+                        <i class="bi bi-github"></i> GitHub
+                    </a>
+                    <a href="{% url 'contact' %}" class="text-muted text-decoration-none">
+                        <i class="bi bi-envelope"></i> 联系我
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -69,21 +142,21 @@
     {% block extra_js %}
     <script>
         function copyEmail() {
-            const email = "2377392781@qq.com"; // 记得换成你的真实邮箱
+            const email = "2377392781@qq.com"; 
             const btn = document.getElementById('emailBtn');
-            const originalText = btn.innerHTML; // 保存原始按钮文字(包含图标)
+            
+            // 防御性编程：如果当前页面没有这个按钮，直接返回，不报错
+            if (!btn) return;
+
+            const originalHtml = btn.innerHTML; // 保存带图标的HTML
             
             navigator.clipboard.writeText(email).then(() => {
-                // 成功后的反馈
-                btn.innerHTML = "已复制！";
-                btn.classList.remove('btn-outline-dark');
-                btn.classList.add('btn-success');
+                btn.innerHTML = '<i class="bi bi-check-lg"></i> 已复制！';
+                btn.classList.replace('btn-outline-dark', 'btn-success');
                 
-                // 2秒后恢复原状
                 setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.classList.remove('btn-success');
-                    btn.classList.add('btn-outline-dark');
+                    btn.innerHTML = originalHtml;
+                    btn.classList.replace('btn-success', 'btn-outline-dark');
                 }, 2000);
             }).catch(err => {
                 console.error('复制失败', err);
