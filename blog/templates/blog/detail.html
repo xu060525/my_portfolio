@@ -19,5 +19,68 @@
         <div class="article-content">
             {{ post.content|safe }}
         </div>
+
+        <hr class="my-5">
+
+        <!-- 评论区容器 -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                
+                <!-- 1. 评论列表 -->
+                <h4 class="mb-4">
+                    <i class="bi bi-chat-dots"></i> {{ comments.count }} 条评论
+                </h4>
+                
+                {% for comment in comments %}
+                <div class="d-flex mb-4">
+                    <!-- 随机头像占位符 (用首字母) -->
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-light text-secondary d-flex align-items-center justify-content-center fw-bold border" 
+                            style="width: 50px; height: 50px; font-size: 1.2rem;">
+                            {{ comment.name|slice:":1"|upper }}
+                        </div>
+                    </div>
+                    <div class="ms-3 flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mt-0 mb-1 fs-6 fw-bold">{{ comment.name }}</h5>
+                            <small class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
+                        </div>
+                        <p class="text-muted mb-0 small">{{ comment.body|linebreaks }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center py-4 bg-light rounded-3">
+                    还没有评论，快来抢沙发吧！🛋️
+                </p>
+                {% endfor %}
+
+                <!-- 2. 发表评论表单 -->
+                <div class="card shadow-sm mt-5 border-0 bg-light">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3">发表评论</h5>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form.name }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.email }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.body }}
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary rounded-pill">
+                                    <i class="bi bi-send-fill"></i> 提交评论
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 {% endblock %}

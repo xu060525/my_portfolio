@@ -1,8 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 import markdown
 
 from .models import Post
+from .forms import CommentForm
 
 def post_list(request):
     post_list = Post.objects.all().order_by('-created_at')
@@ -17,6 +18,7 @@ def post_list(request):
 
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
+    comments = post.comments.filter(active=True)
     
     # --- Markdown 渲染核心 ---
     # extensions 解释：
@@ -29,5 +31,22 @@ def post_detail(request, slug):
         'markdown.extensions.extra',        # 负责表格等其他杂项
         'markdown.extensions.toc',
     ])
+
+    # 这里的逻辑和 Day 10 的 Contact 类似
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            # 暂不保存到数据库，因为还需要关联 post
+            new_comment = form.save(commit=False)
+            new_comment.post = post # 关联当前文章
+            new_comment.save() # 正式保存
+            # 刷新页面，防止重复提交
+            return redirect('blog:detail', slug=slug)
+    else:
+        form = CommentForm()
     
-    return render(request, 'blog/detail.html', {'post': post})
+    return render(request, 'blog/detail.html', {
+        'post': post,
+        'comments': comments,
+        'form': form,         
+    })

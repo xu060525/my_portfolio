@@ -6,6 +6,8 @@
 
 <!-- 填坑：核心内容 -->
 {% block content %}
+    <p>文章总数: {{ page_obj.paginator.count }}</p> 
+<!-- 或者如果你没用分页器，用 {{ posts.count }} -->
     <div class="container mt-5">
         <div class="card">
             <div class="card-body">
@@ -13,7 +15,7 @@
                 <div class="container mt-5">
                     <h1>我的技术博客</h1>
                     <hr>
-                    {% for post in posts %}
+                    {% for post in page_obj %}
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h2 class="card-title"><a href="{% url 'blog:detail' post.slug %}">{{ post.title }}</a></h2>

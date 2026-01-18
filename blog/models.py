@@ -18,3 +18,21 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Comment(models.Model):
+    # 关联文章：文章被删，评论也跟着删
+    # related_name='comments' 让我们能用post.comments.all() 查评论
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+
+    name = models.CharField(max_length=80, verbose_name="昵称")
+    email = models.EmailField(verbose_name="邮箱")  # 仅后台可见，用于链系
+    body = models.TextField(verbose_name="评论内容")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True) # 审核开关：如果是 False 就不显示
+     
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f'Comment by {self.name} on {self.post}'
