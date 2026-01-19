@@ -135,3 +135,23 @@ def search(request):
         }
 
         return render(request, 'main/search_results.html', context)
+    
+def about(request):
+    # 技能数据：名称, 熟练度(0-100), 颜色
+    skills_data = [
+        {"name": "Python/Django", "score": 90, "color": "rgba(255, 99, 132, 0.2)", "border": "rgba(255, 99, 132, 1)"},
+        {"name": "C/Embedded", "score": 75, "color": "rgba(54, 162, 235, 0.2)", "border": "rgba(54, 162, 235, 1)"},
+        {"name": "Linux/Git", "score": 80, "color": "rgba(255, 206, 86, 0.2)", "border": "rgba(255, 206, 86, 1)"},
+        {"name": "ROS/Robot", "score": 70, "color": "rgba(75, 192, 192, 0.2)", "border": "rgba(75, 192, 192, 1)"},
+        {"name": "PCB Design", "score": 60, "color": "rgba(153, 102, 255, 0.2)", "border": "rgba(153, 102, 255, 1)"},
+    ]
+    
+    # 提取出 JS 需要的纯列表
+    skill_names = [s['name'] for s in skills_data]
+    skill_scores = [s['score'] for s in skills_data]
+    
+    context = {
+        'skill_names': skill_names,
+        'skill_scores': skill_scores,
+    }
+    return render(request, 'main/about.html', context)

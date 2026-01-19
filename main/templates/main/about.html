@@ -1,104 +1,191 @@
 {% extends 'main/base.html' %}
-{% load static %} <!-- 必须加载静态文件标签 -->
+{% load static %}
 
-{% block title %}关于我 - 预备役自动化工程师{% endblock %}
+{% block title %}关于我 - K.X. Studio{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row g-4 my-4"> <!-- g-4 增加列间距，my-4 增加上下间距 -->
+    
     <!-- 左侧：个人信息卡片 -->
-    <div class="col-md-4 mb-4">
-        <div class="card shadow-sm sticky-top" style="top: 20px;">
-            <!-- 头像 -->
-            <div class="card-body text-center">
-                <img src="{% static 'assets/avatar.jpg' %}" class="rounded-circle img-thumbnail mb-3" alt="我的头像" style="width: 150px; height: 150px; object-fit: cover;">
-                <h3 class="card-title">徐恺翔</h3>
-                <p class="text-muted">自动化专业 / 大二学生</p>
-                
-                <div class="d-grid gap-2 mt-4">
-                    <!-- 1. 新增：醒目的主要按钮，跳转到 Contact 页面 -->
-                    <a href="{% url 'contact' %}" class="btn btn-primary">
-                        <i class="bi bi-envelope-paper-fill"></i> 向我发送邮件！
-                    </a>
-
-                    <!-- 2. 原有：次要按钮，保留复制功能，样式改为 Outline 以示区分 -->
-                    <button class="btn btn-outline-dark" onclick="copyEmail()" id="emailBtn" 
-                            data-bs-toggle="tooltip" data-bs-placement="top" title="点击复制">
-                        <i class="bi bi-clipboard"></i> 复制我的邮箱！
-                    </button>
-                    
-                    <!-- 3. (可选) 简历下载保留在注释里，随时开启 -->
-                    <!-- <a href="{% static 'assets/resume.pdf' %}" class="btn btn-outline-secondary btn-sm" target="_blank">
-                        <i class="bi bi-file-earmark-pdf"></i> 下载简历
-                    </a> -->
-            </div>
-            
-            <!-- 联系方式列表 -->
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">学校: 北京科技大学</li>
-                <li class="list-group-item">GitHub: <a href="https://github.com/xu060525">suffer</a></li>
-                <li class="list-group-item">研究方向：嵌入式 / 机器视觉</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- 右侧：详细介绍 -->
-    <div class="col-md-8">
-        <!-- 个人简介 -->
-        <div class="card shadow-sm mb-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 sticky-top text-center p-3" style="top: 100px; z-index: 1;">
             <div class="card-body">
-                <h4 class="card-title border-bottom pb-2">个人简介</h4>
-                <p class="card-text mt-3">
-                    你好！我是一名热衷于把代码变成现实动力的自动化学生。
-                    <br><br>
-                    目前的学习重点是 Python 全栈开发与 ROS 机器人操作系统。
-                    我喜欢捣鼓树莓派、Arduino, 并坚信“Talk is cheap, show me the code”。
+                <!-- 头像：加个白色边框和阴影，更有层次感 -->
+                <img src="{% static 'assets/avatar.jpg' %}" 
+                     class="rounded-circle shadow mb-4 bg-white p-1" 
+                     alt="我的头像" 
+                     style="width: 160px; height: 160px; object-fit: cover;">
+                
+                <h2 class="card-title fw-bold mb-1">曦愀</h2>
+                <p class="text-muted badge bg-light text-dark border rounded-pill px-3 py-2 mb-4">
+                    <i class="bi bi-mortarboard-fill text-primary"></i> 自动化专业 / 大二
                 </p>
-            </div>
-        </div>
-
-        <!-- 技能树 (Progress Bars) -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <h4 class="card-title border-bottom pb-2">技术栈</h4>
                 
-                <div class="mt-3">
-                    <label>Python / Django</label>
-                    <div class="progress mb-3" style="height: 20px;">
-                        <div class="progress-bar bg-success" style="width: 85%">85%</div>
-                    </div>
-
-                    <label>C</label>
-                    <div class="progress mb-3" style="height: 20px;">
-                        <div class="progress-bar bg-info" style="width: 70%">70%</div>
-                    </div>
-
-                    <label>电路设计 / Altium Designer</label>
-                    <div class="progress mb-3" style="height: 20px;">
-                        <div class="progress-bar bg-warning" style="width: 60%">60%</div>
-                    </div>
-
-                    <label>Linux / Git</label>
-                    <div class="progress mb-3" style="height: 20px;">
-                        <div class="progress-bar bg-dark" style="width: 75%">75%</div>
-                    </div>
+                <!-- 按钮组 -->
+                <div class="d-grid gap-3">
+                    <a href="{% url 'contact' %}" class="btn btn-primary rounded-pill py-2 shadow-sm">
+                        <i class="bi bi-envelope-paper-fill"></i> 发送邮件
+                    </a>
+                    <button class="btn btn-outline-dark rounded-pill py-2" onclick="copyEmail()" id="emailBtn">
+                        <i class="bi bi-clipboard"></i> 复制邮箱
+                    </button>
                 </div>
-            </div>
-        </div>
 
-        <!-- 教育/经历时间轴 -->
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h4 class="card-title border-bottom pb-2">教育经历</h4>
-                <ul class="list-unstyled mt-3">
-                    <li class="mb-3">
-                        <h5>北京科技大学 - 自动化</h5>
-                        <p class="text-muted mb-1">2024 - 至今 | 本科</p>
-                        <p>主修课程: 电路原理、自动控制原理、C语言程序设计。</p>
+                <hr class="my-4 opacity-25">
+
+                <!-- 信息列表：去掉了 list-group 的边框，改用纯文本排列 -->
+                <ul class="list-unstyled text-start px-2">
+                    <li class="mb-3 d-flex align-items-center">
+                        <i class="bi bi-geo-alt-fill text-danger me-3 fs-5"></i>
+                        <span>北京科技大学</span>
                     </li>
-                    <!-- 可以加更多 -->
+                    <li class="mb-3 d-flex align-items-center">
+                        <i class="bi bi-github text-dark me-3 fs-5"></i>
+                        <a href="https://github.com/xu060525" target="_blank" class="text-decoration-none text-dark link-primary">
+                            github.com/suffer
+                        </a>
+                    </li>
+                    <li class="mb-3 d-flex align-items-center">
+                        <i class="bi bi-cpu-fill text-primary me-3 fs-5"></i>
+                        <span>嵌入式 / 机器视觉</span>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
+
+    <!-- 右侧：详细内容 -->
+    <div class="col-lg-8">
+        
+        <!-- 1. 个人简介 -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h4 class="card-title fw-bold mb-4">
+                    <i class="bi bi-person-lines-fill text-primary"></i> 个人简介
+                </h4>
+                <p class="card-text text-secondary lh-lg">
+                    你好！我是一名热衷于把代码变成现实动力的自动化学生。
+                    <br>
+                    目前的学习重点是 <strong class="text-dark">Python 全栈开发</strong> 与 <strong class="text-dark">ROS 机器人操作系统</strong>。
+                    我喜欢捣鼓树莓派、Arduino，并坚信 “<em class="text-primary">Talk is cheap, show me the code</em>”。
+                </p>
+            </div>
+        </div>
+
+        <!-- 2. 技能雷达图 (替换了原来的进度条) -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h4 class="card-title fw-bold mb-4">
+                    <i class="bi bi-radar text-primary"></i> 技能分布
+                </h4>
+                
+                <!-- 图表容器：高度限制在 400px 以内 -->
+                <div style="position: relative; height: 400px; width: 100%;">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+                
+                <p class="text-center text-muted small mt-3">
+                    * 数据基于自我评估与项目经验
+                </p>
+            </div>
+        </div>
+
+        <!-- 3. 教育/经历 -->
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h4 class="card-title fw-bold mb-4">
+                    <i class="bi bi-book-half text-primary"></i> 教育经历
+                </h4>
+                
+                <!-- 经历条目 -->
+                <div class="d-flex border-start border-3 border-primary ps-3 mb-3">
+                    <div>
+                        <h5 class="fw-bold mb-1">北京科技大学 - 自动化</h5>
+                        <span class="badge bg-light text-dark border mb-2">2024 - 至今 | 本科</span>
+                        <p class="text-muted small mb-0">
+                            主修课程: 电路原理、自动控制原理、C语言程序设计、模拟电子技术。
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 如果有更多经历，复制上面的 div 即可 -->
+            </div>
+        </div>
+        
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- 1. 引入 Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{{ skill_names|json_script:"data-names" }}
+{{ skill_scores|json_script:"data-scores" }}
+
+<script>
+    // 2. 渲染雷达图
+    document.addEventListener("DOMContentLoaded", function() {
+        // 获取 Django 传来的数据 (需要在 views.py 传递 skill_names 和 skill_scores)
+        // 如果 views.py 还没改好，可以用下面的假数据测试：
+        // const labels = ['Python', 'C/C++', 'Linux', '电路设计', 'ROS'];
+        // const data = [90, 75, 80, 60, 70];
+        
+        const labels = JSON.parse(document.getElementById('data-names').textContent);
+        const data = JSON.parse(document.getElementById('data-scores').textContent);
+        const ctx = document.getElementById('skillsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar', // 雷达图
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '技能熟练度',
+                    data: data,
+                    fill: true,
+                    backgroundColor: 'rgba(13, 110, 253, 0.2)', // 蓝色半透明填充
+                    borderColor: 'rgba(13, 110, 253, 1)',      // 蓝色边框
+                    pointBackgroundColor: 'rgba(13, 110, 253, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(13, 110, 253, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                elements: {
+                    line: { borderWidth: 3 }
+                },
+                scales: {
+                    r: {
+                        angleLines: { color: '#eee' }, // 轴线颜色
+                        grid: { color: '#eee' },       // 网格颜色
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: { display: false }      // 隐藏具体的刻度数字，看起来更简洁
+                    }
+                },
+                plugins: {
+                    legend: { display: false } // 隐藏图例
+                }
+            }
+        });
+    });
+
+    // 3. 复制邮箱脚本
+    function copyEmail() {
+        const email = "2377392781@qq.com"; 
+        const btn = document.getElementById('emailBtn');
+        const originalHtml = btn.innerHTML;
+        
+        navigator.clipboard.writeText(email).then(() => {
+            btn.innerHTML = '<i class="bi bi-check-lg"></i> 已复制！';
+            btn.classList.replace('btn-outline-dark', 'btn-success');
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.classList.replace('btn-success', 'btn-outline-dark');
+            }, 2000);
+        });
+    }
+</script>
 {% endblock %}
