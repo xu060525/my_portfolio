@@ -2,6 +2,16 @@
 from .base import *
 import os
 
+PA_USERNAME = 'XiQao' 
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        # 直接写死绝对路径
+        'NAME': f'/home/{PA_USERNAME}/my_portfolio_django/db.sqlite3',
+    }
+}
+
 DEBUG = False
 
 ALLOWED_HOSTS = [
