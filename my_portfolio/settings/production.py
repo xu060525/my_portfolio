@@ -2,13 +2,16 @@
 from .base import *
 import os
 
-PA_USERNAME = 'XiQao' 
+# 获取当前 production.py 的目录
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+# 回退两级，找到 my_portfolio_django 根目录
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(CURRENT_DIR)))
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        # 直接写死绝对路径
-        'NAME': f'/home/{PA_USERNAME}/my_portfolio_django/db.sqlite3',
+        # 拼接出绝对路径
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
