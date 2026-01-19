@@ -45,3 +45,11 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+# 生产环境使用数据库缓存 (因为 PA 免费版不支持 Redis)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table', # 记得在线上运行 createcachetable
+    }
+}

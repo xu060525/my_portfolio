@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
 from django.db.models import Q
+from django.views.decorators.cache import cache_page
 
 from .models import Project, Tag
 from .forms import ContactForm
@@ -14,6 +15,8 @@ from blog.models import Post
 logger = logging.getLogger(__name__)
 
 # 这里的 request 参数是必须的，代表用户发来的请求
+# 加上缓存，有效期15分钟
+@cache_page(60 * 15)
 def home(request):
     # 查询所有项目对象
     projects = Project.objects.all()
@@ -135,7 +138,8 @@ def search(request):
         }
 
         return render(request, 'main/search_results.html', context)
-    
+
+@cache_page(60 * 5)    
 def about(request):
     # 技能数据：名称, 熟练度(0-100), 颜色
     skills_data = [
