@@ -1,5 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 import markdown
 
 from .models import Post
@@ -50,3 +53,27 @@ def post_detail(request, slug):
         'comments': comments,
         'form': form,         
     })
+
+@login_required
+@require_POST
+def like_post(request):
+    post_id = request.POST.get('id')
+    action = request.POST.get('action') # 'like' or 'unlike'
+
+
+    if post_id and action:
+        try:
+            post = Post.objects.get(id=post_id)
+            if request.user in post.likes.all():
+                post.likes.remove(request.user)
+                liked = False
+
+            else: 
+                post.likes.add(request.user)
+                liked = True
+
+            return JsonResponse({'status': 'ok', 'liked': liked, 'count': post.total_likes()})
+        except Post.DoesNotExist:
+            pass
+
+    return JsonResponse({'status': 'error'})

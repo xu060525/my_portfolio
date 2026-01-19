@@ -10,6 +10,7 @@ class Post(models.Model):
     content = models.TextField(verbose_name="正文 (Markdown) ")
     created_at = models.DateTimeField(default=timezone.now, verbose_name="发布时间")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
+    likes = models.ManyToManyField(User, related_name='blog_posts', blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -18,6 +19,9 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def total_likes(self):
+        return self.likes.count()
     
 class Comment(models.Model):
     # 关联文章：文章被删，评论也跟着删

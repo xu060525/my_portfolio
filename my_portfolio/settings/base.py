@@ -39,6 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps', 
+    'django.contrib.sites', 
+
+    'allauth', 
+    'allauth.account', 
+    'allauth.socialaccount', 
+    'allauth.socialaccount.providers.github', 
 
     'main',
     'blog',
@@ -52,6 +58,36 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'allauth.account.middleware.AccountMiddleware', 
+]
+
+# --- Allauth 核心配置 ---
+SITE_ID = 1 # 对应 Django 表里的第一条记录
+
+# 登录，注销后均跳转至首页
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# 不强制验证邮箱
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+# 配置 GitHub 的 Key 和 Secret (推荐用环境变量！)
+from decouple import config
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'APP': {
+            'client_id': config('GITHUB_CLIENT_ID', default=''),
+            'secret': config('GITHUB_SECRET', default=''),
+            'key': ''
+        }
+    }
+}
+
+# 认证后端 (让 Django 既能用用户名登录，也能用 GitHub 登录)
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 ROOT_URLCONF = 'my_portfolio.urls'
