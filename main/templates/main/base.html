@@ -1,3 +1,5 @@
+{% load socialaccount %}
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -89,6 +91,40 @@
                     <li class="nav-item px-2">
                         <a class="nav-link" href="{% url 'about' %}">关于我</a>
                     </li>
+
+                    <!-- 分割线 -->
+                    <li class="nav-item border-start mx-2 d-none d-lg-block"></li>
+
+                    {% if user.is_authenticated %}
+                        <!-- 如果已登录：显示头像和注销 -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <!-- 尝试获取 GitHub 头像 -->
+                                {% if user.socialaccount_set.all.0.get_avatar_url %}
+                                    <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="rounded-circle" width="30" height="30">
+                                {% else %}
+                                    <i class="bi bi-person-circle"></i>
+                                {% endif %}
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <!-- allauth 的注销链接 -->
+                                    <form method="post" action="{% url 'account_logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">退出登录</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <!-- 如果未登录：显示 GitHub 登录按钮 -->
+                        <li class="nav-item">
+                            <a href="{% provider_login_url 'github' %}" class="btn btn-dark btn-sm rounded-pill px-3 mt-1">
+                                <i class="bi bi-github"></i> GitHub 登录
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
 
                 <!-- 搜索框：放在右侧，胶囊样式 -->

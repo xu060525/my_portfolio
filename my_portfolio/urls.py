@@ -31,6 +31,9 @@ sitemaps = {
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    # 引入 allauth 的路由
+    path('accounts/', include('allauth.urls')), 
+
     path('', include('main.urls')), # 首页
 
     path('blog/', include('blog.urls')),
