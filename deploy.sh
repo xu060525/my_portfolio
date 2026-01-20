@@ -5,7 +5,7 @@
 PROJECT_DIR="/home/XiQiao/my_portfolio"
 # 你的虚拟环境名字 (PA默认通常是 .virtualenvs/你的项目名)
 # 如果你不确定，可以在 PA Console 输入 `workon` 看看名字
-VENV_NAME="venv"
+VENV_NAME="my_portfolio/venv"
 
 echo "🚀 开始部署..."
 
@@ -19,7 +19,7 @@ git pull origin main
 
 # 3. 激活虚拟环境 (PA 特有的 source 方式)
 echo "🐍 激活虚拟环境..."
-source /home/XiQiao/.virtualenvs/$VENV_NAME/bin/activate
+source /home/XiQiao/$VENV_NAME/bin/activate
 
 # 4. 安装依赖 (如果 requirements.txt 变了)
 echo "📦 检查依赖更新..."

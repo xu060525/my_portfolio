@@ -58,22 +58,21 @@ def post_detail(request, slug):
 @require_POST
 def like_post(request):
     post_id = request.POST.get('id')
-    action = request.POST.get('action') # 'like' or 'unlike'
-
-
-    if post_id and action:
-        try:
-            post = Post.objects.get(id=post_id)
-            if request.user in post.likes.all():
-                post.likes.remove(request.user)
-                liked = False
-
-            else: 
-                post.likes.add(request.user)
-                liked = True
-
-            return JsonResponse({'status': 'ok', 'liked': liked, 'count': post.total_likes()})
-        except Post.DoesNotExist:
-            pass
-
-    return JsonResponse({'status': 'error'})
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'msg': 'Login required'})
+    
+    post = get_object_or_404(Post, id=post_id)
+    
+    # 核心逻辑：点过就删，没点就加
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
+        
+    return JsonResponse({
+        'status': 'ok', 
+        'count': post.likes.count(), 
+        'liked': liked # 告诉前端现在的状态
+    })
