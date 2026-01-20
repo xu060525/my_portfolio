@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
 
 from .models import Project, Tag
 from .forms import ContactForm
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 # 这里的 request 参数是必须的，代表用户发来的请求
 # 加上缓存，有效期15分钟
 @cache_page(60 * 15)
+@vary_on_cookie
 def home(request):
     # 查询所有项目对象
     projects = Project.objects.all()

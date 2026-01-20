@@ -1,6 +1,7 @@
 # mywebsite/settings/production.py
 from .base import *
 import os
+from decouple import config
 
 # 回退两级，找到 my_portfolio_django 根目录
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -64,3 +65,5 @@ CACHES = {
         'LOCATION': 'my_cache_table', # 记得在线上运行 createcachetable
     }
 }
+
+GITHUB_CLIENT_ID = config('GITHUB_CLIENT_ID')

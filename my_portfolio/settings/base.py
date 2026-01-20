@@ -71,6 +71,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 # 不强制验证邮箱
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_LOGOUT_ON_GER = True
 
 # 配置 GitHub 的 Key 和 Secret (推荐用环境变量！)
 from decouple import config
