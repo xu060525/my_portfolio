@@ -22,12 +22,14 @@ from django.contrib.sitemaps.views import sitemap
 from rest_framework.routers import DefaultRouter
 
 from main import views as main_views
+from blog import views as blog_views
 from blog.sitemaps import PostSitemap
 
 # 创建路由器
 router = DefaultRouter()
 # 注册我们的 API, 名字叫 'projects'
 router.register(r'projects', main_views.ProjectViewSet)
+router.register(r'posts', blog_views.PostViewSet)
 
 # 定义所有的 sitemap
 sitemaps = {

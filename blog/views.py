@@ -3,10 +3,13 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, filters
 import markdown
 
 from .models import Post
 from .forms import CommentForm
+from .serializers import PostSerializer, PostDetailSerializer
 
 def post_list(request):
     post_list = Post.objects.all().order_by('-created_at')
@@ -76,3 +79,17 @@ def like_post(request):
         'count': post.likes.count(), 
         'liked': liked # 告诉前端现在的状态
     })
+
+class PostViewSet(viewsets.ReadOnlyModelViewSet):
+    # 只显示已发布的文章
+    queryset = Post.objects.all().order_by('-created_at')
+
+    # 动态选择 Serializer
+    def get_serializer_class(self):
+        if self.action == 'retrieve': # 代表详情页 (GET /api/osts/1/)
+            return PostDetailSerializer
+        return PostSerializer
+    
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'content']    # 允许标题和正文
+    

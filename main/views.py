@@ -8,7 +8,8 @@ from django.conf import settings
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_cookie
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, filters
 
 from .models import Project, Tag
 from .forms import ContactForm
@@ -170,3 +171,16 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Project.objects.all().order_by('-created_at')
     serializer_class = ProjectSerializer
+
+    # 配置过滤器后端
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+
+    # 配置搜索字段
+    search_fields = ['title', 'description', 'technology_stack']
+
+    # 配置过滤字段
+    filterset_fields = ['title']
+
+    # 配置排序
+    ordering_fields = ['created_at', 'title']
+
