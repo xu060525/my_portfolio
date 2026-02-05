@@ -8,9 +8,11 @@ from django.conf import settings
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_cookie
+from rest_framework import viewsets
 
 from .models import Project, Tag
 from .forms import ContactForm
+from .serializers import ProjectSerializer
 from blog.models import Post
 
 logger = logging.getLogger(__name__)
@@ -161,3 +163,10 @@ def about(request):
         'skill_scores': skill_scores,
     }
     return render(request, 'main/about.html', context)
+
+class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API  接口：允许查看所有项目
+    """
+    queryset = Project.objects.all().order_by('-created_at')
+    serializer_class = ProjectSerializer

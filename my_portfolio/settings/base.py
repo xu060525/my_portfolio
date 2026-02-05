@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount', 
     'allauth.socialaccount.providers.github', 
 
+    'rest_framework', 
+
     'main',
     'blog',
 ]
@@ -175,4 +177,12 @@ EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.conso
 LOGGING = {
     'version': 1,
     'disavle_existing_loggers': False, 
+}
+
+# DRF 配置
+REST_FRAMEWORK = {
+    # 默认权限：允许任何人读取 (GET) ，但只有管理员能修改
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
 }

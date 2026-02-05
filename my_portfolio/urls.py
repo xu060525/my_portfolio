@@ -19,9 +19,15 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
+from rest_framework.routers import DefaultRouter
 
-from main import views
+from main import views as main_views
 from blog.sitemaps import PostSitemap
+
+# 创建路由器
+router = DefaultRouter()
+# 注册我们的 API, 名字叫 'projects'
+router.register(r'projects', main_views.ProjectViewSet)
 
 # 定义所有的 sitemap
 sitemaps = {
@@ -30,12 +36,11 @@ sitemaps = {
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),     # 引入 allauth 的路由
 
-    # 引入 allauth 的路由
-    path('accounts/', include('allauth.urls')), 
+    path('api/', include(router.urls)), 
 
     path('', include('main.urls')), # 首页
-
     path('blog/', include('blog.urls')),
 
      # 添加 sitemap.xml
