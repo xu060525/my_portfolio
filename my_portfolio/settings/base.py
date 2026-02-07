@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount', 
     'allauth.socialaccount.providers.github', 
 
+    'corsheaders',
     'rest_framework', 
 
     'main',
@@ -53,6 +54,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
+
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.gzip.GZipMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',

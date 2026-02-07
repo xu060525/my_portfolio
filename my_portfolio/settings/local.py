@@ -1,4 +1,3 @@
-# mywebsite/settings/local.py
 from .base import *
 
 DEBUG = True
@@ -34,3 +33,5 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache', 
     }
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
